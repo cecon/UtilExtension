@@ -3,13 +3,130 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-namespace UtilExtension
-{
-    public static class UtilsExtension
-    {
+namespace UtilExtension {
+    public static class UtilsExtension {
+        /// <summary>
+        /// Verifica se todos os valores dentro do argumento values coferem com os valores permitidos.
+        /// </summary>
+        /// <example>
+        /// EX: permits = "1234567890ABCDEFGHIJKLMNOPQRSTUVXZ"
+        ///     value = "NOMEÇ123"
+        ///     nesse caso o valor de retorno seria falso, tendo em vista que o Ç informado
+        /// no campo value não confere com nenhum dos caractere do argumento permits
+        /// </example>
+        /// <param name="allowed">string de caracteres permitidos</param>
+        /// <param name="value">valor a ser conferido</param>
+        /// <returns>retorna um bool indicando se os valores conferem ou não!</returns>
+        public static bool IsMatch(this string value, string allowed)
+        {
+            var result = value.All(allowed.Contains);
+            return result;
+        }
+
+        /// <summary>
+        /// Verifica se todos os caracteres contidos no argumento são numéricos.
+        /// </summary>
+        /// <param name="args">Caracteres a serem analizados</param>
+        /// <returns>Bool indicando se o argumento contem apenas digitos ou não</returns>
+        public static bool AreDigits(this string args)
+        {
+            return Regex.IsMatch(args, "^[0-9]*$");            
+        }
+
+        /// <summary>
+        /// Verifica se todos os caracteres contidos no argumento são 
+        /// numéricos ou letras válidas do alfabeto
+        /// </summary>
+        /// <param name="args">Caracteres a serem validados</param>
+        /// <returns>Bool indicando se os caracteres são apenas números ou letras</returns>
+        public static bool IsLetterOrDigit(this string args) {
+            return IsLetterOrDigit(args, "");
+        }
+
+        /// <summary>
+        /// Verifica se todos os caracteres contidos no argumento são 
+        /// numéricos ou letras válidas do alfabeto
+        /// </summary>
+        /// <param name="args">Caracteres a serem validados</param>
+        /// <param name="exception">Caracteres que devem ser ignorados extra alfabeto</param>
+        /// <returns>Bool indicando se os caracteres são apenas números ou letras</returns>
+        public static bool IsLetterOrDigit(this string args, string exception) {
+            return IsMatch(args, string.Concat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYX", exception));
+        }
+
+        /// <summary>
+        /// Verifica se no argumento existe um CNPJ válido
+        /// o sistema irá ignorar qualquer tipo de formatação tratando apenas números
+        /// </summary>
+        /// <param name="cnpj">CNPJ a ser validado</param>
+        /// <returns>Bool indicando se o argumento é ou não um CNPJ</returns>
+        public static bool CheckCnpj(this string cnpj) {
+            var multiplicador1 = new[] { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            var multiplicador2 = new[] { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            cnpj = cnpj.ToDigit();
+            if (cnpj.Length != 14) return false;
+
+            var tempCnpj = cnpj.Substring(0, 12);
+            var soma = 0;
+            for (var i = 0; i < 12; i++) soma += int.Parse(tempCnpj[i].ToString(CultureInfo.InvariantCulture)) * multiplicador1[i];
+            var resto = (soma % 11);
+            if (resto < 2) resto = 0;
+            else resto = 11 - resto;
+
+            var digito = resto.ToString(CultureInfo.InvariantCulture);
+            tempCnpj = tempCnpj + digito;
+            soma = 0;
+            for (var i = 0; i < 13; i++) soma += int.Parse(tempCnpj[i].ToString(CultureInfo.InvariantCulture)) * multiplicador2[i];
+            resto = (soma % 11);
+            if (resto < 2) resto = 0;
+            else resto = 11 - resto;
+            digito = digito + resto.ToString(CultureInfo.InvariantCulture);
+            return cnpj.EndsWith(digito);
+        }
+
+        /// <summary>
+        /// Verifica se no argumento existe um CPF válido
+        /// o sistema irá ignorar qualquer tipo de formatação tratando apenas números
+        /// </summary>
+        /// <param name="cpf">CPF a ser validado</param>
+        /// <returns>Bool indicando se o argumento contem ou não um CPF válido</returns>
+        public static bool CheckCpf(this string cpf) {
+            var multiplicador1 = new[] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+            var multiplicador2 = new[] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+            cpf = cpf.ToDigit();
+            if (cpf.Length != 11) return false;
+
+            var tempCpf = cpf.Substring(0, 9);
+            var soma = 0;
+            for (var i = 0; i < 9; i++) soma += int.Parse(tempCpf[i].ToString(CultureInfo.InvariantCulture)) * multiplicador1[i];
+            var resto = soma % 11;
+            if (resto < 2) resto = 0;
+            else resto = 11 - resto;
+            var digito = resto.ToString(CultureInfo.InvariantCulture);
+            tempCpf = tempCpf + digito;
+            soma = 0;
+            for (var i = 0; i < 10; i++) soma += int.Parse(tempCpf[i].ToString(CultureInfo.InvariantCulture)) * multiplicador2[i];
+            resto = soma % 11;
+            if (resto < 2) resto = 0;
+            else resto = 11 - resto;
+            digito = digito + resto.ToString(CultureInfo.InvariantCulture);
+            return cpf.EndsWith(digito);
+        }
+
+        /// <summary>
+        /// Verifica se é um Email válido
+        /// </summary>
+        /// <param name="value">email a ser validado</param>
+        /// <returns>Bool indicando se o e-mail está correto</returns>
+        public static bool CheckEmail(this string value)
+        {
+            return Regex.IsMatch(value, @"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)\b");
+        }
+
         /// <summary>
         /// Convert o string do argumento em um string MD5
         /// </summary>
@@ -17,10 +134,8 @@ namespace UtilExtension
         /// <returns>Um string MD5 do argumento.</returns>
         public static string ToMd5(this string value)
         {
-
-            var resultado = value.Select(x => (byte)x).ToArray();
-            return ToMd5(resultado);
-
+            var bytes = Encoding.UTF8.GetBytes(value);
+            return ToMd5(bytes);
         }
 
         /// <summary>
@@ -32,13 +147,46 @@ namespace UtilExtension
         {
             MD5 md5 = new MD5CryptoServiceProvider();
             value = md5.ComputeHash(value);
+            return ToHexString(value);
+        }
+
+        /// <summary>
+        /// Convert o string do argumento em um string SHA1
+        /// </summary>
+        /// <param name="value">string a ser convertido em SHA1</param>
+        /// <returns>Um string Sha1 do argumento.</returns>
+        public static string ToSha1(this string value)
+        {
+            var bytes = Encoding.UTF8.GetBytes(value);
+            return ToSha1(bytes);
+        }
+
+        /// <summary>
+        /// Convert um array de bytes em um SHA1
+        /// </summary>
+        /// <param name="value">array de bytes a ser convertido em SHA1</param>
+        /// <returns>Um string SHA1 do argumento.</returns>
+        public static string ToSha1(this byte[] value)
+        {
+            var sha1 = SHA1.Create();
+            var hashBytes = sha1.ComputeHash(value);
+            return ToHexString(hashBytes);
+
+        }
+
+        /// <summary>
+        /// Converte um array de bytes para um string de digitos hexadecimais
+        /// </summary>
+        /// <param name="bytes">array de bytes</param>
+        /// <returns>String de digitos hexadecimais</returns>
+        public static string ToHexString(this byte[] bytes)
+        {
             var sb = new StringBuilder();
-            foreach (var t in value)
+            foreach (var hex in bytes.Select(b => b.ToString("x2")))
             {
-                sb.Append(t.ToString("x2"));
+                sb.Append(hex);
             }
             return sb.ToString();
-
         }
 
         /// <summary>
@@ -272,5 +420,5 @@ namespace UtilExtension
                 propertyInfo.SetValue(to, pVal, null);
             }
         }
-    }
+    }   
 }

@@ -58,9 +58,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UtilsExtensionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CheckerExtensionTest.cs" />
+    <Compile Include="UtilsExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UtilExtension\UtilExtension.csproj">

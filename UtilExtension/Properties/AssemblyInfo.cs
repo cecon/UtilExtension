@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Conversores Verificadores e Formatadores de string")]
-[assembly: AssemblyDescription("Conversores Verificadores e Formatadores de string")]
+[assembly: AssemblyTitle("UtilExtension - Pacote de metodos extensiveis para agilizar o desenvolvimento.")]
+[assembly: AssemblyDescription("Pacote de metodos extensiveis para agilizar na validação e manipulação de strings como mascaras, validação de um CPF ou de um CNPJ, Verificar se determinado string contem apenas digitos entre outras funcionalidades. COntamos com sua contribuição no GITHUB")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Arcnet Automação Comercial Ltda. ME.")]
-[assembly: AssemblyProduct("Util Extension")]
-[assembly: AssemblyCopyright("MIT - 2015")]
+[assembly: AssemblyProduct("UtilExtension")]
+[assembly: AssemblyCopyright("MIT")]
 [assembly: AssemblyTrademark("™ 2015")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.2")]
+[assembly: AssemblyFileVersion("2.0.0.2")]
