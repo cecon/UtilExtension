@@ -285,7 +285,7 @@ namespace UtilExtension {
 
             return
                 Convert.ToDecimal(string.Format("{0}{1},{2}", sign, n.Substring(0, n.Length - casasDecimais),
-                    n.Substring(n.Length - casasDecimais)));
+                    n.Substring(n.Length - casasDecimais)), CultureInfo.GetCultureInfo("pt-BR"));
         }
 
         /// <summary>

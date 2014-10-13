@@ -340,7 +340,7 @@ namespace UtilExtension.Test
         {
             Assert.AreEqual(0M, "RRR".ToMoney(3));
             Assert.AreEqual(0M, "".ToMoney(3));
-            Assert.AreEqual(-2.5M, "(R$ 2.50)".ToMoney());
+            Assert.AreEqual(-2.50M, "(R$ 2.50)".ToMoney());
             Assert.AreEqual(111111.222M, "ºAA111AAAAAAA111ÇÇÇ222".ToMoney(3));
             Assert.AreEqual(0M, "-**Freddie Mercury 0".ToMoney());
             Assert.AreEqual(.01M, "#%$Freddie Mercury 0000001".ToMoney());
